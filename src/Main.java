@@ -39,24 +39,24 @@ public class Main {
     }
     private static void checkLoc()
     {
-        if(livingRoom.getInventory().find(bucket.getName()) && livingRoom.getInventory().find(whiskey.getName()))
+        if(livingRoom.find(bucket.getName()) && livingRoom.find(whiskey.getName()))
         {
             livingRoom.setDespcription(Direction.REPLIC_LIVING_ROOM_ALL_ITEMS.getCommand());
         }
-        else if(!livingRoom.getInventory().find(bucket.getName()) && livingRoom.getInventory().find(whiskey.getName()))
+        else if(!livingRoom.find(bucket.getName()) && livingRoom.find(whiskey.getName()))
         {
             livingRoom.setDespcription(Direction.REPLIC_LIVING_ROOM_NOT_BUCKET.getCommand());
         }
-        else if(livingRoom.getInventory().find(bucket.getName()) && !livingRoom.getInventory().find(whiskey.getName()))
+        else if(livingRoom.find(bucket.getName()) && !livingRoom.find(whiskey.getName()))
         {
             livingRoom.setDespcription(Direction.REPLIC_LIVING_ROOM_NOT_WHISKEY.getCommand());
         }
-        else if(!livingRoom.getInventory().find(bucket.getName()) && !livingRoom.getInventory().find(whiskey.getName()))
+        else if(!livingRoom.find(bucket.getName()) && !livingRoom.find(whiskey.getName()))
         {
             livingRoom.setDespcription(Direction.REPLIC_LIVING_ROOM_NOT_ALL.getCommand());
         }
 
-        if(!garden.getInventory().find(chain.getName()))
+        if(!garden.find(chain.getName()))
         {
             garden.setDespcription(Direction.REPLIC_GARDEN_NOT_CHAIN.getCommand());
         }
@@ -105,10 +105,10 @@ public class Main {
 
         boolean start = true;
 
-        livingRoom.dl.put(Direction.UP, attic);
-        livingRoom.dl.put(Direction.WEST, garden);
-        attic.dl.put(Direction.DOWN, livingRoom);
-        garden.dl.put(Direction.EAST, livingRoom);
+        livingRoom.putWay(Direction.UP, attic);
+        livingRoom.putWay(Direction.WEST, garden);
+        attic.putWay(Direction.DOWN, livingRoom);
+        garden.putWay(Direction.EAST, livingRoom);
 
 
         //добавляем вещи на локации

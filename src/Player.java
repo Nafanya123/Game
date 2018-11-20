@@ -16,15 +16,17 @@ public class Player {
         if(inventory.find(updateNameObject(str)) && inventory.find(updateNameObjectTwo(str)))
         {
             combo.craft(inventory.findItem(updateNameObject(str)), inventory.findItem(updateNameObjectTwo(str)),
-                    location.getInventory().findItem("Горелка"), inventory);
+                    location.findItem("Горелка"), inventory);
         }
-        else if(location.getInventory().find("Колодец") && inventory.find(updateNameObject(str)))
+        else if(location.find("Колодец") && inventory.find(updateNameObject(str)))
         {
-            combo.craft(inventory.findItem(updateNameObject(str)), location.getInventory().findItem("Колодец"), inventory, location.getInventory());
+            combo.craft(inventory.findItem(updateNameObject(str)),
+                        location.findItem("Колодец"), inventory, location.getInventory());
         }
-        else if(location.getInventory().find("Волшебник") && inventory.find(updateNameObject(str)))
+        else if(location.find("Волшебник") && inventory.find(updateNameObject(str)))
         {
-            combo.craft(inventory.findItem(updateNameObject(str)), location.getInventory().findItem("Волшебник"), inventory, location.getInventory());
+            combo.craft(inventory.findItem(updateNameObject(str)),
+                        location.findItem("Волшебник"), inventory, location.getInventory());
         }
         else if(str.equals(Direction.DRINK_WHISKEY.getCommand()))
         {
@@ -48,77 +50,45 @@ public class Player {
         inventory.show();
     }
 
+    private void searchAvailableItems(String name)
+    {
+        if(location.find(updateName(name)))
+        {
+            updateItems(updateName(name));
+        }
+        else
+        {
+            System.out.println(updateName(name) + " тут не найдено)");
+        }
+    }
     public void take(String name)
     {
         if(name.equals(Direction.BUCKET.getCommand()))
         {
-            if(location.getInventory().find(updateName(name)))
-            {
-                updateItems(updateName(name));
-
-            }
-            else
-            {
-                System.out.println(updateName(name) + " тут не найдено)");
-            }
+            searchAvailableItems(name);
         }
         else if(name.equals(Direction.CHAIN.getCommand()))
         {
-            if(location.getInventory().find(updateName(name)))
-            {
-                updateItems(updateName(name));
-            }
-            else
-            {
-                System.out.println(updateName(name) + " тут не найден(а)");
-            }
+            searchAvailableItems(name);
         }
         else if(name.equals(Direction.WHISKEY.getCommand()))
         {
-            if(location.getInventory().find(updateName(name)))
-            {
-                updateItems(updateName(name));
-            }
-            else
-            {
-                System.out.println(updateName(name) + " тут не найден(о)");
-            }
+            searchAvailableItems(name);
         }
         else if(name.equals(Direction.WIZARD.getCommand()))
         {
-            if(location.getInventory().find(updateLastChar(updateName(name))))
-            {
-                updateItems(updateLastChar(updateName(name)));
-            }
-
-            else
-            {
-                System.out.println(updateName(name) + " тут не найден(о)");
-            }
+            searchAvailableItems(name);
         }
         else if(name.equals(Direction.WELL.getCommand()))
         {
-            if(location.getInventory().find(updateName(name)))
-            {
-                updateItems(updateName(name));
-            }
-            else
-            {
-                System.out.println(updateName(name) + " тут не найден(о)");
-            }
+            searchAvailableItems(name);
         }
         else if(name.equals(Direction.BURNENR.getCommand()))
         {
             name = updateName(name);
             name = name.substring(0, 6) + 'а';
-            if(location.getInventory().find(updateName(name)))
-            {
-                updateItems(name);
-            }
-            else
-            {
-                System.out.println(updateName(name) + " тут не найден(о)");
-            }
+
+            searchAvailableItems(name);
         }
         else
         {
@@ -136,54 +106,43 @@ public class Player {
         lookAround();
     }
 
-    //задать направление
+    //проверка, если коллекция дает добро на выбранное направление,
+    //то плеер перемещается на другую локацию
+    private void fineRoute(Direction direction)
+    {
+        location = location.executeDirection(direction, location);
+    }
+    //проверяет, совпадает ли введеная команда
+    //на переход в другую локацию
     private void direction(String route)
     {
         if(route.equals(Direction.UP.getCommand()))
         {
-            if(location.dl.containsKey(Direction.UP))
-            {
-                location = location.dl.get(Direction.UP);
-            }
-            else
-                System.out.println("Вы не можете туда идти.");
+            fineRoute(Direction.UP);
         }
         else if(route.equals(Direction.DOWN.getCommand()))
         {
-            if(location.dl.containsKey(Direction.DOWN))
-            {
-                location = location.dl.get(Direction.DOWN);
-            }
-            else
-                System.out.println("Вы не можете туда идти.");
+            fineRoute(Direction.DOWN);
         }
         else if(route.equals(Direction.WEST.getCommand()))
         {
-            if(location.dl.containsKey(Direction.WEST))
-            {
-                location = location.dl.get(Direction.WEST);
-            }
-            else
-                System.out.println("Вы не можете туда идти.");
+            fineRoute(Direction.WEST);
         }
         else if(route.equals(Direction.EAST.getCommand()))
         {
-            if(location.dl.containsKey(Direction.EAST))
-            {
-                location = location.dl.get(Direction.EAST);
-            }
-            else
-                System.out.println("Вы не можете туда идти.");
+            fineRoute(Direction.EAST);
         }
+        else
+            System.out.println("Вы не можете туда идти.");
     }
 
     //провеить перемещается ли вещь
     private void updateItems(String name)
     {
-        if(location.getInventory().findItem(name).getMoveable().equals(Moveable.MOBILE))
+        if(location.findItem(name).getMoveable().equals(Moveable.MOBILE))
         {
-            inventory.add(new Item(name, Moveable.MOBILE, location.getInventory().findItem(name).getProperties()));
-            location.getInventory().remove(location.getInventory().findItem(name));
+            inventory.add(new Item(name, Moveable.MOBILE, location.findItem(name).getProperties()));
+            location.remove(location.findItem(name));
             System.out.println("Подобрано: " + inventory.findItem(name).getProperties());
         }
         else
