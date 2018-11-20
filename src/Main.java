@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -80,14 +81,27 @@ public class Main {
 
     private static void checkAll(String str)
     {
-        if(!str.equals(Direction.UP.getCommand()) && !str.equals(Direction.DOWN.getCommand()) &&
-           !str.equals(Direction.WEST.getCommand()) && !str.equals(Direction.EAST.getCommand()) &&
-           !str.equals(Direction.LOOK_AROUND.getCommand()) && !str.equals(Direction.INVENTORY.getCommand()) &&
-           !str.equals(Direction.BUCKET.getCommand()) && !str.equals(Direction.WHISKEY.getCommand()) &&
-           !str.equals(Direction.CHAIN.getCommand()) && !str.equals(Direction.WIZARD.getCommand()) &&
-           !str.equals(Direction.WELL.getCommand()) && !str.equals(Direction.DRINK_WHISKEY.getCommand()) &&
-           !str.equals(Direction.USE_BUCKET_AND_CHAIN.getCommand()) && !str.equals(Direction.USE_BUCKET_ON_WIZARD.getCommand()) &&
-           !str.equals(Direction.USE_BUCKET_ON_WELL.getCommand()) && !str.equals(Direction.BURNENR.getCommand()))
+        ArrayList<String> ss = new ArrayList<>();
+
+        //16 команд
+        ss.add(Direction.UP.getCommand());
+        ss.add(Direction.DOWN.getCommand());
+        ss.add(Direction.WEST.getCommand());
+        ss.add(Direction.EAST.getCommand());
+        ss.add(Direction.LOOK_AROUND.getCommand());
+        ss.add(Direction.INVENTORY.getCommand());
+        ss.add(Direction.BUCKET.getCommand());
+        ss.add(Direction.WHISKEY.getCommand());
+        ss.add(Direction.CHAIN.getCommand());
+        ss.add(Direction.WIZARD.getCommand());
+        ss.add(Direction.WELL.getCommand());
+        ss.add(Direction.DRINK_WHISKEY.getCommand());
+        ss.add(Direction.USE_BUCKET_AND_CHAIN.getCommand());
+        ss.add(Direction.USE_BUCKET_ON_WIZARD.getCommand());
+        ss.add(Direction.USE_BUCKET_ON_WELL.getCommand());
+        ss.add(Direction.BURNENR.getCommand());
+
+        if(!ss.contains(str))
         {
             System.out.println("не верная команда");
         }
