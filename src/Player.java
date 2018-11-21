@@ -127,7 +127,6 @@ public class Player {
         {
             name = updateName(name);
             name = name.substring(0, 6) + 'а';
-            System.out.println(name);
             searchAvailableItems(name);
         }
         else
