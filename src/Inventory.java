@@ -56,6 +56,3 @@ public class Inventory {
         return item;
     }
 }
-
-//Доработать
-// действия с лягушкой

@@ -14,6 +14,40 @@ public class Location {
         this.despcription = despcription;
     }
 
+    public void checkLocation()
+    {
+        if(name.equals("Гостинная"))
+        {
+            if(inventory.find(updateName(Direction.BUCKET.getCommand())) &&
+               inventory.find(updateName(Direction.WHISKEY.getCommand())))
+            {
+                despcription = Replic.REPLIC_LIVING_ROOM_ALL_ITEMS.getReplic();
+            }
+            else if(!inventory.find(updateName(Direction.BUCKET.getCommand())) &&
+                    inventory.find(updateName(Direction.WHISKEY.getCommand())))
+            {
+                despcription = Replic.REPLIC_LIVING_ROOM_NOT_BUCKET.getReplic();
+            }
+            else if(inventory.find(updateName(Direction.BUCKET.getCommand())) &&
+                    !inventory.find(updateName(Direction.WHISKEY.getCommand())))
+            {
+                despcription =  Replic.REPLIC_LIVING_ROOM_NOT_WHISKEY.getReplic();
+            }
+            else if(!inventory.find(updateName(Direction.BUCKET.getCommand())) &&
+                    !inventory.find(updateName(Direction.WHISKEY.getCommand())))
+            {
+                despcription = Replic.REPLIC_LIVING_ROOM_NOT_ALL.getReplic();
+            }
+        }
+
+        if(name.equals("Сад"))
+        {
+            if(!inventory.find(updateName(Direction.CHAIN.getCommand())))
+            {
+                despcription = Replic.REPLIC_GARDEN_NOT_CHAIN.getReplic();
+            }
+        }
+    }
     //задать нарпавление в другие локации
     public void putWay(Direction direction, Location location)
     {
@@ -60,11 +94,15 @@ public class Location {
         return despcription;
     }
 
-    public void setDespcription(String despcription) {
-        this.despcription = despcription;
-    }
-
     public Inventory getInventory() {
         return inventory;
+    }
+
+    //удаляет первое слово
+    private String updateName(String name)
+    {
+        name = name.replace("взять ", "");
+        name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
+        return name;
     }
 }
