@@ -219,7 +219,7 @@ public class Player {
         }
     }
 
-    //удаляет первое слово
+    //удаляет первое слово из введеной команды
     private String updateName(String name)
     {
         name = name.replace("взять ", "");
@@ -227,7 +227,8 @@ public class Player {
         return name;
     }
 
-    //удаляет первое слово и вырезает первую вещь
+    //удаляет первое слово из введеной команды и вырезает первую вещь
+    // для работы с ней
     private String updateNameObject(String name)
     {
         name = name.replace("использовать ", "");
@@ -236,7 +237,7 @@ public class Player {
         return name;
     }
 
-    //удаляет до 3-его пробела
+    //удаляет все из строки до 3-его пробела
     private String updateNameObjectTwo(String name)
     {
         name = name.split(" ")[3];
