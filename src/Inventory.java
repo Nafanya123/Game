@@ -30,6 +30,7 @@ public class Inventory {
         }
     }
 
+    //проверяет, лежит ли нужный предмет в инвентаре?
     public boolean find(String name)
     {
         for (Item item : inventory)

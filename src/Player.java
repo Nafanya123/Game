@@ -30,69 +30,6 @@ public class Player {
         }
     }
 
-    public boolean find(String name)
-    {
-        return inventory.find(name);
-    }
-    //открыть инвентарь игрока
-    public void inventory(String str)
-    {
-        if(str.equals(Direction.INVENTORY.getCommand()))
-        {
-            inventory.show();
-        }
-    }
-
-    public void take(String name)
-    {
-        necessaryCommands = new ArrayList<>();
-
-        necessaryCommands.add(Direction.BUCKET.getCommand());
-        necessaryCommands.add(Direction.WHISKEY.getCommand());
-        necessaryCommands.add(Direction.CHAIN.getCommand());
-        necessaryCommands.add(Direction.WIZARD.getCommand());
-        necessaryCommands.add(Direction.WELL.getCommand());
-        necessaryCommands.add(Direction.FROG.getCommand());
-        necessaryCommands.add(Direction.BURNENR.getCommand());
-
-        if(necessaryCommands.contains(name))
-        {
-            checkTake(name);
-        }
-    }
-    public void lookAround(String str)
-    {
-        if(str.equals(Direction.LOOK_AROUND.getCommand()))
-        {
-            System.out.print(location.getDespcription());
-        }
-    }
-
-    public void go(String route)
-    {
-        necessaryCommands = new ArrayList<>();
-
-        necessaryCommands.add(Direction.UP.getCommand());
-        necessaryCommands.add(Direction.DOWN.getCommand());
-        necessaryCommands.add(Direction.WEST.getCommand());
-        necessaryCommands.add(Direction.EAST.getCommand());
-
-        if(necessaryCommands.contains(route))
-        {
-            direction(route);
-            lookAround(Direction.LOOK_AROUND.getCommand());
-        }
-    }
-
-    public boolean isSobriety() {
-        return sobriety;
-    }
-
-    public void checkLocation()
-    {
-        location.checkLocation();
-    }
-
     private void checkUseItems(String str)
     {
         if(inventory.find(updateNameObject(str)) && inventory.find(updateNameObjectTwo(str)))
@@ -123,6 +60,37 @@ public class Player {
         else
         {
             System.out.println("что то не то");
+        }
+    }
+
+    public boolean find(String name)
+    {
+        return inventory.find(name);
+    }
+    //открыть инвентарь игрока
+    public void inventory(String str)
+    {
+        if(str.equals(Direction.INVENTORY.getCommand()))
+        {
+            inventory.show();
+        }
+    }
+
+    public void take(String name)
+    {
+        necessaryCommands = new ArrayList<>();
+
+        necessaryCommands.add(Direction.BUCKET.getCommand());
+        necessaryCommands.add(Direction.WHISKEY.getCommand());
+        necessaryCommands.add(Direction.CHAIN.getCommand());
+        necessaryCommands.add(Direction.WIZARD.getCommand());
+        necessaryCommands.add(Direction.WELL.getCommand());
+        necessaryCommands.add(Direction.FROG.getCommand());
+        necessaryCommands.add(Direction.BURNENR.getCommand());
+
+        if(necessaryCommands.contains(name))
+        {
+            checkTake(name);
         }
     }
 
@@ -167,11 +135,29 @@ public class Player {
             System.out.println("такой вещи не существует");
         }
     }
-    //проверка, если коллекция дает добро на выбранное направление,
-    //то плеер перемещается на другую локацию
-    private void fineRoute(Direction direction)
+
+    public void lookAround(String str)
     {
-        location = location.executeDirection(direction, location);
+        if(str.equals(Direction.LOOK_AROUND.getCommand()))
+        {
+            System.out.print(location.getDespcription());
+        }
+    }
+
+    public void go(String route)
+    {
+        necessaryCommands = new ArrayList<>();
+
+        necessaryCommands.add(Direction.UP.getCommand());
+        necessaryCommands.add(Direction.DOWN.getCommand());
+        necessaryCommands.add(Direction.WEST.getCommand());
+        necessaryCommands.add(Direction.EAST.getCommand());
+
+        if(necessaryCommands.contains(route))
+        {
+            direction(route);
+            lookAround(Direction.LOOK_AROUND.getCommand());
+        }
     }
 
     //проверяет, совпадает ли введеная команда
@@ -196,6 +182,22 @@ public class Player {
         }
         else
             System.out.println("Вы не можете туда идти.");
+    }
+
+    public boolean isSobriety() {
+        return sobriety;
+    }
+
+    public void checkLocation()
+    {
+        location.checkLocation();
+    }
+
+    //проверка, если коллекция дает добро на выбранное направление,
+    //то плеер перемещается на другую локацию
+    private void fineRoute(Direction direction)
+    {
+        location = location.executeDirection(direction, location);
     }
 
     //провеить перемещается ли вещь
