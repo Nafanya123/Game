@@ -1,259 +1,152 @@
-import java.util.ArrayList;
+import java.util.Map;
 
 public class Player {
 
     private Location location;
-    private ArrayList<String> necessaryCommands;
-    private boolean sobriety = true;
     private Inventory inventory = new Inventory();
-    private Combo combo = new Combo();
+
+
+
+    private boolean hangover = false;
+    private Item item;
+    private Walking walk;
 
     Player(Location location)
     {
         this.location = location;
-        System.out.println(location.getDespcription());
+        walk = new Walking();
     }
 
-
-    public void use(String str)
+    public void lookAround()
     {
-        necessaryCommands = new ArrayList<>();
-
-        necessaryCommands.add(Direction.USE_BUCKET_AND_CHAIN.getCommand());
-        necessaryCommands.add(Direction.USE_BUCKET_ON_WELL.getCommand());
-        necessaryCommands.add(Direction.USE_BUCKET_ON_WIZARD.getCommand());
-        necessaryCommands.add(Direction.DRINK_WHISKEY.getCommand());
-
-        if(necessaryCommands.contains(str))
-        {
-            checkUseItems(str);
-        }
+        System.out.print(location.getDespcription());
     }
 
-    private void checkUseItems(String str)
+    public void inventory()
     {
-        if(inventory.find(updateNameObject(str)) && inventory.find(updateNameObjectTwo(str)))
+            inventory.show();
+    }
+
+    public void use(String item_1, String item_2, Combination[] combinations)
+    {
+        boolean start = true;
+        Item itemFirst = inventory.findItem(item_1);
+        Item locationItem = location.findItem(item_2);
+        Item itemSecond = inventory.findItem(item_2);
+
+        if(!inventory.find(item_2))
         {
-            combo.craft(inventory.findItem(updateNameObject(str)), inventory.findItem(updateNameObjectTwo(str)),
-                    location.findItem("Горелка"), inventory);
-        }
-        else if(location.find("Колодец") && inventory.find(updateNameObject(str)))
-        {
-            combo.craft(inventory.findItem(updateNameObject(str)),
-                    location.findItem("Колодец"), inventory, location.getInventory());
-        }
-        else if(location.find("Волшебник") && inventory.find(updateNameObject(str)))
-        {
-            combo.craft(inventory.findItem(updateNameObject(str)),
-                    location.findItem("Волшебник"), inventory, location.getInventory());
-        }
-        else if(str.equals(Direction.DRINK_WHISKEY.getCommand()))
-        {
-            str = str.replace("выпить ", "");
-            str = str.substring(0,1).toUpperCase() + str.substring(1).toLowerCase();
-            if(inventory.find(str))
+            if(locationItem != null)
             {
-                System.out.println("Вы напились");
-                sobriety = false;
+                itemSecond = locationItem;
+            }
+            else
+            {
+                System.out.println(" ! Предмет(ы) или объект(ы) отсутствует или вы допустили ошибку в его названии\n" +
+                        " ! Для помощи введите: команда использовать");
+                start = false;
+            }
+        }
+
+        if(itemFirst == null)
+        {
+            System.out.println(" ! У вас нет указанного предмета в инвентаре или неккоректно введено его название\n" +
+                    " ! Для помощи введите: команда использовать");
+            start = false;
+        }
+        else if(itemSecond.equals(null))
+        {
+            if(locationItem != null)
+            {
+                itemSecond = locationItem;
+            }
+            else
+            {
+                System.out.println(" ! Предмет(ы) или объект(ы) отсутствует или вы допустили ошибку в его названии\n" +
+                        " ! Для помощи введите: команда использовать");
+                start = false;
+            }
+        }
+
+        if(start)
+        {
+            for(Combination combination : combinations)
+            {
+                Item combFirst = combination.getItem_1();
+                Item combSecond = combination.getItem_2();
+                Item locItem = combination.getItem_3();
+
+                if((itemFirst.equals(combFirst) && itemSecond.equals(combSecond) && locItem == null) ||
+                        (itemFirst.equals(combSecond) && itemSecond.equals(combFirst) && locItem == null)) {
+                    if (combination.getResult() != null) {
+                        if (itemFirst.getMoveable().equals(Moveable.MOBILE)) {
+                            inventory.remove(itemFirst);
+                        }
+
+                        if (itemSecond.getMoveable().equals(Moveable.MOBILE)) {
+                            inventory.remove(itemSecond);
+                        }
+                        inventory.add(combination.getResult());
+                    }
+                    System.out.println(combination.printMessage());
+                    return;
+                }
+                else if((itemFirst.equals(combFirst) && itemSecond.equals(combSecond) && location.find(locItem.getName())) ||
+                (itemFirst.equals(combSecond) && itemSecond.equals(combFirst) && location.find(locItem.getName())))
+                {
+                    if (combination.getResult() != null) {
+                        if (itemFirst.getMoveable().equals(Moveable.MOBILE)) {
+                            inventory.remove(itemFirst);
+                        }
+
+                        if (itemSecond.getMoveable().equals(Moveable.MOBILE)) {
+                            inventory.remove(itemSecond);
+                        }
+                        inventory.add(combination.getResult());
+                    }
+                    System.out.println(combination.printMessage());
+                    return;
+                }
+            }
+        }
+    }
+    public void go(String route)
+    {
+        Direction direction;
+        direction = walk.go(route);
+
+        if(direction != null)
+        {
+            location = location.nextLocation(direction, location);
+        }
+        lookAround();
+    }
+
+    public void takeItem(String nameItem)
+    {
+        if(location.find(nameItem))
+        {
+            item = location.findItem(nameItem);
+            if(item.getMoveable().equals(Moveable.MOBILE))
+            {
+                System.out.println("Вы подобрали: " + item.getName());
+                inventory.add(item);
+                location.remove(item);
             }
         }
         else
         {
-            System.out.println("что то не то");
+            System.out.println(nameItem + " нету");
         }
     }
 
-    public boolean find(String name)
+    public boolean find(Item item)
     {
-        return inventory.find(name);
-    }
-    //открыть инвентарь игрока
-    public void inventory(String str)
-    {
-        if(str.equals(Direction.INVENTORY.getCommand()))
-        {
-            inventory.show();
-        }
+        return inventory.find(item.getName());
     }
 
-    public void take(String name)
-    {
-        necessaryCommands = new ArrayList<>();
-
-        necessaryCommands.add(Direction.BUCKET.getCommand());
-        necessaryCommands.add(Direction.WHISKEY.getCommand());
-        necessaryCommands.add(Direction.CHAIN.getCommand());
-        necessaryCommands.add(Direction.WIZARD.getCommand());
-        necessaryCommands.add(Direction.WELL.getCommand());
-        necessaryCommands.add(Direction.FROG.getCommand());
-        necessaryCommands.add(Direction.BURNENR.getCommand());
-
-        if(necessaryCommands.contains(name))
-        {
-            checkTake(name);
-        }
+    public boolean isHangover() {
+        return hangover;
     }
 
-    private void checkTake(String name)
-    {
-        if(name.equals(Direction.BUCKET.getCommand()))
-        {
-            searchAvailableItems(name);
-        }
-        else if(name.equals(Direction.CHAIN.getCommand()))
-        {
-            searchAvailableItems(name);
-        }
-        else if(name.equals(Direction.WHISKEY.getCommand()))
-        {
-            searchAvailableItems(name);
-        }
-        else if(name.equals(Direction.WIZARD.getCommand()))
-        {
-            searchAvailableItems(name);
-        }
-        else if(name.equals(Direction.WELL.getCommand()))
-        {
-            searchAvailableItems(name);
-        }
-        else if(name.equals(Direction.BURNENR.getCommand()))
-        {
-            name = updateName(name);
-            name = name.substring(0, 6) + 'а';
-
-            searchAvailableItems(name);
-        }
-        else if(name.equals(Direction.FROG.getCommand()))
-        {
-            name = updateName(name);
-            name = name.substring(0, 6) + 'а';
-            searchAvailableItems(name);
-        }
-        else
-        {
-            System.out.println("такой вещи не существует");
-        }
-    }
-
-    public void lookAround(String str)
-    {
-        if(str.equals(Direction.LOOK_AROUND.getCommand()))
-        {
-            System.out.print(location.getDespcription());
-        }
-    }
-
-    public void go(String route)
-    {
-        necessaryCommands = new ArrayList<>();
-
-        necessaryCommands.add(Direction.UP.getCommand());
-        necessaryCommands.add(Direction.DOWN.getCommand());
-        necessaryCommands.add(Direction.WEST.getCommand());
-        necessaryCommands.add(Direction.EAST.getCommand());
-
-        if(necessaryCommands.contains(route))
-        {
-            direction(route);
-            lookAround(Direction.LOOK_AROUND.getCommand());
-        }
-    }
-
-    //проверяет, совпадает ли введеная команда
-    //на переход в другую локацию
-    private void direction(String route)
-    {
-        if(route.equals(Direction.UP.getCommand()))
-        {
-            fineRoute(Direction.UP);
-        }
-        else if(route.equals(Direction.DOWN.getCommand()))
-        {
-            fineRoute(Direction.DOWN);
-        }
-        else if(route.equals(Direction.WEST.getCommand()))
-        {
-            fineRoute(Direction.WEST);
-        }
-        else if(route.equals(Direction.EAST.getCommand()))
-        {
-            fineRoute(Direction.EAST);
-        }
-        else
-            System.out.println("Вы не можете туда идти.");
-    }
-
-    public boolean isSobriety() {
-        return sobriety;
-    }
-
-    public void checkLocation()
-    {
-        location.checkLocation();
-    }
-
-    //проверка, если коллекция дает добро на выбранное направление,
-    //то плеер перемещается на другую локацию
-    private void fineRoute(Direction direction)
-    {
-        location = location.executeDirection(direction, location);
-    }
-
-    //провеить перемещается ли вещь
-    private void updateItems(String name)
-    {
-        if(location.findItem(name).getMoveable().equals(Moveable.MOBILE))
-        {
-            inventory.add(new Item(name, Moveable.MOBILE, location.findItem(name).getProperties()));
-            location.remove(location.findItem(name));
-            System.out.println("Подобрано: " + inventory.findItem(name).getProperties());
-        }
-        else if(location.findItem(name).getName().equals("Лягушка"))
-        {
-            System.out.println(name + " очень скользкая, она ускользнула от вас");
-            location.remove(location.findItem(name));
-        }
-        else
-        {
-            System.out.println(name + " не сможет поместиться к вам в сумку");
-        }
-    }
-
-    //удаляет первое слово из введеной команды
-    private String updateName(String name)
-    {
-        name = name.replace("взять ", "");
-        name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
-        return name;
-    }
-
-    //удаляет первое слово из введеной команды и вырезает первую вещь
-    // для работы с ней
-    private String updateNameObject(String name)
-    {
-        name = name.replace("использовать ", "");
-        name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
-        name = name.split(" ")[0];
-        return name;
-    }
-
-    //удаляет все из строки до 3-его пробела
-    private String updateNameObjectTwo(String name)
-    {
-        name = name.split(" ")[3];
-        name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
-        return name;
-    }
-
-    private void searchAvailableItems(String name)
-    {
-        if(location.find(updateName(name)))
-        {
-            updateItems(updateName(name));
-        }
-        else
-        {
-            System.out.println(updateName(name) + " тут не найдено");
-        }
-    }
 }

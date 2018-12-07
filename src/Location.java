@@ -4,79 +4,33 @@ import java.util.Map;
 public class Location {
 
     private String name;
-    private String despcription;
-    private Inventory inventory = new Inventory();
-    private Map<Direction, Location> way = new HashMap<Direction, Location>();
 
-    Location(String name, String despcription)
+
+
+    private String description;
+    private Inventory inventory = new Inventory();
+    private Map<Direction, Location> directions = new HashMap<>();
+
+    Location(String name, String description)
     {
         this.name = name;
-        this.despcription = despcription;
+        this.description = description;
     }
 
-    public void checkLocation()
+    public void putDirections(Direction direction, Location location)
     {
-        if(name.equals("Гостинная"))
+        directions.put(direction, location);
+    }
+    public void inventory()
+    {
+        inventory.show();
+    }
+
+    public Location nextLocation(Direction direction, Location location) {
+
+        if(directions.containsKey(direction))
         {
-            if(inventory.find(updateName(Direction.BUCKET.getCommand())) &&
-               inventory.find(updateName(Direction.WHISKEY.getCommand())))
-            {
-                despcription = Replic.REPLIC_LIVING_ROOM_ALL_ITEMS.getReplic();
-            }
-            else if(!inventory.find(updateName(Direction.BUCKET.getCommand())) &&
-                    inventory.find(updateName(Direction.WHISKEY.getCommand())))
-            {
-                despcription = Replic.REPLIC_LIVING_ROOM_NOT_BUCKET.getReplic();
-            }
-            else if(inventory.find(updateName(Direction.BUCKET.getCommand())) &&
-                    !inventory.find(updateName(Direction.WHISKEY.getCommand())))
-            {
-                despcription =  Replic.REPLIC_LIVING_ROOM_NOT_WHISKEY.getReplic();
-            }
-            else if(!inventory.find(updateName(Direction.BUCKET.getCommand())) &&
-                    !inventory.find(updateName(Direction.WHISKEY.getCommand())))
-            {
-                despcription = Replic.REPLIC_LIVING_ROOM_NOT_ALL.getReplic();
-            }
-        }
-
-        if(name.equals("Сад"))
-        {
-            if(!inventory.find(updateName(Direction.CHAIN.getCommand())))
-            {
-                despcription = Replic.REPLIC_GARDEN_NOT_CHAIN.getReplic();
-            }
-        }
-    }
-    //задать нарпавление в другие локации
-    public void putWay(Direction direction, Location location)
-    {
-        way.put(direction, location);
-    }
-
-    //находится ли предмет в инвентаре
-    public boolean find(String name)
-    {
-        return inventory.find(name);
-    }
-
-    public Item findItem(String sss)
-    {
-        return inventory.findItem(sss);
-    }
-
-    //положить предмет в рюкзак локации
-    public void putItem(Item item)
-    {
-        inventory.add(item);
-    }
-
-    //поиск правильного пути
-    public Location executeDirection(Direction direction, Location location)
-    {
-        if(way.containsKey(direction))
-        {
-            location = way.get(direction);
+            location = directions.get(direction);
             return location;
         }
         else
@@ -85,24 +39,34 @@ public class Location {
         return location;
     }
 
+    public void putItem(Item item)
+    {
+        inventory.add(item);
+    }
+
     public void remove(Item item)
     {
         inventory.remove(item);
     }
 
-    public String getDespcription() {
-        return despcription;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    //удаляет первое слово
-    private String updateName(String name)
+    public boolean find(String name)
     {
-        name = name.replace("взять ", "");
-        name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
-        return name;
+        return inventory.find(name);
+    }
+
+    public Item findItem(String name)
+    {
+        if(inventory.find(name))
+        {
+            return inventory.findItem(name);
+        }
+        return null;
+    }
+    public String getDespcription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

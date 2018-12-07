@@ -1,7 +1,19 @@
 public class Item {
 
+
+
     private String name;
+
+    public String getProperties() {
+        return properties;
+    }
+
     private String properties;
+
+    public Moveable getMoveable() {
+        return moveable;
+    }
+
     private Moveable moveable;
 
     Item(String name, Moveable moveable, String properties)
@@ -15,11 +27,4 @@ public class Item {
         return name;
     }
 
-    public String getProperties() {
-        return properties;
-    }
-
-    public Moveable getMoveable() {
-        return moveable;
-    }
 }
